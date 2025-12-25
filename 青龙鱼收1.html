@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>祝去旅游小姐平安夜快乐</title>
+    <style>
+        /* ==================== 封面样式 ==================== */
+        #welcome-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: url('微信图片_20251221191524_69_34.jpg') no-repeat center center;
+            background-size: cover;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #welcome-screen::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 1;
+        }
+
+        #welcome-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+
+        #welcome-title {
+            font-size: 2.8rem;
+            margin-bottom: 30px;
+            letter-spacing: 4px;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 5px 15px rgba(0,0,0,0.5);
+            animation: titlePulse 3s ease-in-out infinite;
+        }
+
+        #start-button {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid #ffffff;
+            color: white;
+            cursor: pointer;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
+
+        #start-button:hover {
+            background: #ffffff;
+            color: #000;
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255,255,255,0.5);
+        }
+
+        /* 进阶建议：备用跳转链接样式 */
+        .backup-option {
+            margin-top: 25px;
+            font-size: 13px;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .backup-option a {
+            color: #fff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .backup-option:hover { opacity: 1; }
+
+        .welcome-hidden {
+            opacity: 0 !important;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { opacity: 0.9; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 35px rgba(255, 255, 255, 1); }
+        }
+
+        /* ==================== 1.html 基础样式 ==================== */
+        body { margin: 0; overflow: hidden; background: radial-gradient(circle at center, #0b1a2a 0%, #000000 100%); font-family: 'Times New Roman', serif; }
+        #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
+        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
+        #loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease-out; }
+        .loader-text { color: #aaddff; font-size: 14px; letter-spacing: 4px; margin-top: 20px; }
+        .spinner { width: 40px; height: 40px; border: 1px solid rgba(255, 255, 255, 0.1); border-top: 1px solid #00ffcc; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        h1 { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; margin: 0; pointer-events: none; font-size: 36px; font-weight: 400; background: linear-gradient(135deg, #e0f7fa 0%, #ffffff 50%, #88ccff 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: aurora-shine 6s linear infinite; opacity: 0.9; }
+        .upload-wrapper { position: absolute; top: 40px; right: 40px; z-index: 20; pointer-events: auto; display: flex; gap: 10px; }
+        .control-btn { display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50px; padding: 8px 20px; color: rgba(255, 255, 255, 0.7); font-size: 10px; text-transform: uppercase; backdrop-filter: blur(5px); cursor: pointer; transition: all 0.3s ease; }
+    </style>
+    
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+                "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/+esm"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="welcome-screen">
+        <div id="welcome-content">
+            <div id="welcome-title">祝去旅游小姐平安夜快乐</div>
+            <button id="start-button" onclick="startSurprise()">开启惊喜</button>
+            
+            <div class="backup-option">
+                如果加载太慢，请 <a href="1.html">点击这里直接进入</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <div class="loader-text">Loading...</div>
+    </div>
+    <div id="canvas-container"></div>
+    <div id="ui-layer">
+        <h1>Merry Christmas</h1>
+        <div class="upload-wrapper">
+            <button class="control-btn" id="manage-btn">📁 管理</button>
+            <button class="control-btn" id="music-btn">🎵 音乐</button>
+        </div>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script type="module">
+        /* 这里是原 1.html 中 script type="module" 里的 1500 多行代码 */
+        /* 请将你本地 1.html 文件中 <script type="module"> 到 </script> 之间的内容粘贴在这里 */
+    </script>
+
+    <script>
+        // 封面点击逻辑
+        function startSurprise() {
+            const screen = document.getElementById('welcome-screen');
+            screen.classList.add('welcome-hidden');
+            const audio = document.getElementById('bg-music');
+            if(audio) audio.play().catch(e => console.log("互动后播放"));
+            setTimeout(() => { screen.style.display = 'none'; }, 1200);
+        }
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="zh-CN"> 
